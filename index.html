@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<!-- Streetak's web page (copied over Unity's by the webgl build, Editor/StreetakCommands.cs BuildWebGL): the game in
+     the whole window, a loading bar, the keys. build.json (written by the build, cut again by tools/web/push_pages.sh)
+     names the files in parts of at most 24 MiB that this page fetches, keeps in Cache Storage, joins and hands to
+     Unity (docs/dev/web.md "First load"). -->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script>
+  // an invite link /j/<code> is this same page (Cloudflare Pages rewrites it, tools/web/site/_redirects): every
+  // relative address (build.json, Build/, the icons) is the game's folder above it, not /j/
+  (function () {
+    var m = location.pathname.match(/^(.*\/)[jf]\/[^\/]*\/?$/);   // (and a friend link /f/<code>, Runtime/Friends)
+    if (m) { var b = document.createElement("base"); b.href = m[1]; document.head.appendChild(b); }
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05070f">
+<!-- search (docs/store/aso_2026-10-29.md): the title and description carry what people search for («لعبة كورة أونلاين»,
+     "street football"); the canonical folds every invite link /j/<code> and friend link /f/<code> into the game's one page -->
+<title>ستريتك: كورة الشارع أونلاين في المتصفح | Streetak</title>
+<link rel="canonical" href="https://play.streetak.com/">
+<!-- the link preview (WhatsApp and the rest): one static page serves the game and every invite link, so the words
+     fit both; the picture is tools/web/site/og.jpg (tools/web/render_og.js), absolute as previews need -->
+<meta name="description" content="العب ستريتك، لعبة كورة شارع أونلاين ببلاش، من المتصفح من غير تحميل: 3 ضد 3 وخماسي مع صحابك بأوضة بكود، والبوتات بتكمّل الفريق. Free online street football in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://play.streetak.com/">
+<meta property="og:site_name" content="ستريتك">
+<meta property="og:title" content="تعالى نلعب ستريتك! كورة الشارع أونلاين">
+<meta property="og:description" content="صاحبك مستنيك في الملعب. افتح اللينك وادخل الماتش على طول من المتصفح، 3 ضد 3 وخماسي، والبوتات بتكمّل الفريق.">
+<meta property="og:image" content="https://play.streetak.com/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ستريتك: «تعالى نلعب» فوق ملعب كورة شارع بالليل">
+<meta property="og:locale" content="ar_EG">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="تعالى نلعب ستريتك! كورة الشارع أونلاين">
+<meta name="twitter:description" content="صاحبك مستنيك في الملعب. افتح اللينك وادخل الماتش على طول من المتصفح.">
+<meta name="twitter:image" content="https://play.streetak.com/og.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"VideoGame","@id":"https://streetak.com/#game","name":"ستريتك: كورة الشارع","alternateName":["Streetak: Street Football","Streetak","ستريتك"],
+ "url":"https://play.streetak.com/","description":"لعبة كورة شارع أونلاين ببلاش، 3 ضد 3 وخماسي، في المتصفح وعلى أندرويد وآيفون. Free online 3v3 and 5v5 street football.",
+ "image":"https://play.streetak.com/og.jpg","genre":["Sports","Football","Street football"],"gamePlatform":["Web browser","Android","iOS"],
+ "applicationCategory":"GameApplication","operatingSystem":"Web, Android, iOS","playMode":"MultiPlayer","inLanguage":["ar","en"],"isAccessibleForFree":true,
+ "offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"},
+ "publisher":{"@type":"Organization","name":"Lamma Labs","url":"https://streetak.com/"},
+ "sameAs":["https://streetak.com/","https://play.google.com/store/apps/details?id=com.streetak.football","https://apps.apple.com/app/id6826257319"]}
+</script>
+<style>
+  /* the same look as the game's own loading screen (Runtime/LoadingScreen.cs, founder 30 Oct: «خلفية سينمائية كدا
+     حاجات زي بتاعت pubg loading»): one of our courts full bleed, pushed in slowly, a vignette and a light grain over it,
+     the logo small in the top corner, a tip that changes, a thin cyan bar along the bottom (the pictures: loading/*.jpg,
+     tools/art/make_loading_stills.py, ~130 KB each; without them the night blue and the cyan glow as before) */
+  :root { --bg: #050714; --ink: #f4f1ea; --dim: #c7d1f2; --gold: #28e0ff; --ember: #28e0ff; --warn: #ffc24b; --track: rgba(255,255,255,.14); }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); overflow: hidden;
+    font-family: "Segoe UI", Tahoma, system-ui, -apple-system, sans-serif; -webkit-user-select: none; user-select: none; }
+  /* the game in the window exactly: pinned top-left with the window's own size (not inset + 100vw, which on this
+     right-to-left page is pinned by its right edge, so anything wider than the window spilled off the left; and the
+     dynamic height on phones, where 100vh runs under the browser's bar) */
+  #unity-canvas { position: fixed; left: 0; top: 0; width: 100%; height: 100%; height: 100dvh; display: block;
+    direction: ltr; background: var(--bg); outline: none; touch-action: none; }
+  #cover { position: fixed; inset: 0; z-index: 3; overflow: hidden; text-align: center;
+    background: radial-gradient(ellipse 60% 55% at 50% 42%, rgba(41,224,255,.26) 0%, rgba(41,224,255,0) 70%),
+      radial-gradient(ellipse 45% 40% at 66% 62%, rgba(107,122,255,.22) 0%, rgba(107,122,255,0) 70%), var(--bg); transition: opacity .5s; }
+  #cover.gone { opacity: 0; pointer-events: none; }
+  #still { position: absolute; inset: 0; background: center / cover no-repeat; opacity: 0; transition: opacity .8s;
+    transform-origin: 55% 50%; animation: push 18s ease-in-out infinite alternate; will-change: transform; }
+  #still.on { opacity: 1; }
+  @keyframes push { from { transform: scale(1.04) translate(-1%, .5%); } to { transform: scale(1.14) translate(1.2%, -.8%); } }
+  @media (prefers-reduced-motion: reduce) { #still { animation: none; transform: scale(1.06); } }
+  #shade { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 75% 70% at 50% 46%, rgba(0,3,8,0) 45%, rgba(0,3,8,.82) 100%),
+      linear-gradient(to bottom, rgba(3,5,13,.55) 0, rgba(3,5,13,0) 22%, rgba(3,5,13,0) 52%, rgba(3,5,13,.9) 100%); }
+  #grain { position: absolute; inset: -50%; pointer-events: none; opacity: .09; animation: grain .5s steps(4) infinite;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  @keyframes grain { 0% { transform: translate(0, 0); } 25% { transform: translate(-3%, 2%); } 50% { transform: translate(2%, -3%); } 75% { transform: translate(-2%, -1%); } }
+  #top { position: absolute; top: calc(18px + env(safe-area-inset-top)); left: 28px; right: 28px; display: flex;
+    align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .logo { width: min(240px, 34vw); height: auto; display: block; filter: drop-shadow(0 2px 10px rgba(0,0,0,.5)); }
+  .ar { font-size: clamp(14px, 1.6vw, 19px); font-weight: 600; color: var(--ink); text-shadow: 0 1px 6px rgba(0,0,0,.7);
+    padding-top: 10px; border-bottom: 3px solid var(--gold); padding-bottom: 8px; }
+  #mid { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); width: min(720px, 92vw);
+    display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  #bottom { position: absolute; left: 28px; right: 28px; bottom: calc(18px + env(safe-area-inset-bottom));
+    display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
+  #tip { min-height: 1.5em; font-size: clamp(15px, 1.7vw, 21px); font-weight: 600; color: rgba(235,240,255,.95);
+    text-shadow: 0 1px 6px rgba(0,0,0,.8); transition: opacity .4s; }
+  #tip.out { opacity: 0; }
+  #row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  #bar { width: 100%; height: 5px; border-radius: 3px; background: var(--track); overflow: hidden; direction: inherit; }
+  #fill { height: 100%; width: 0; background: var(--gold); box-shadow: 0 0 12px rgba(40,224,255,.8); transition: width .25s; }
+  #msg { min-height: 1.4em; font-size: clamp(14px, 1.5vw, 18px); font-weight: 700; color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.7); }
+  #slow { min-height: 1.2em; font-size: 14px; font-weight: 600; color: var(--warn); text-shadow: 0 1px 6px rgba(0,0,0,.7); }
+  #err { display: none; font-size: 12px; color: #ff9d8a; direction: ltr; max-width: 88vw; word-break: break-word; text-shadow: 0 1px 4px #000; }
+  #ftitle { font-size: clamp(20px, 2.4vw, 30px); font-weight: 700; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.8); }
+  #retry { display: none; margin-top: 6px; padding: 12px 34px; border: 0; border-radius: 12px; background: var(--gold); color: #05070f;
+    font: 700 18px "Segoe UI", Tahoma, sans-serif; cursor: pointer; box-shadow: 0 0 22px rgba(40,224,255,.45); }
+  #cover.failed #still { filter: brightness(.45); }
+  #cover.failed #tip, #cover.failed #keys, #cover.failed #row, #cover.failed #bar { visibility: hidden; }
+  /* short windows (a phone or a small laptop on its side): a smaller logo, no keys list (it is in the pause menu) */
+  @media (max-height: 560px) { .logo { width: min(180px, 30vw); } #keys { display: none; } }
+  #keys { align-self: center; font-size: 12.5px; color: rgba(220,228,250,.88); line-height: 1.9; max-width: min(760px, 92vw);
+    padding: 8px 14px; border-radius: 12px; background: rgba(5,7,20,.55); border: 1px solid rgba(160,180,255,.18); }
+  #keys kbd { display: inline-block; direction: ltr; min-width: 1.6em; padding: 0 .4em; border: 1px solid #39425c;
+    border-bottom-width: 2px; border-radius: 5px; background: #10162a; color: var(--ink);
+    font: 12px/1.6 ui-monospace, Consolas, monospace; }
+  #fs { position: fixed; bottom: 12px; left: 12px; z-index: 2; display: none; padding: 7px 12px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.25); background: rgba(5,7,15,.55); color: var(--ink);
+    font: 13px "Segoe UI", Tahoma, sans-serif; cursor: pointer; }
+  #fs:hover { background: rgba(5,7,15,.85); }
+  #rotate { display: none; position: fixed; inset: 0; z-index: 4; background: var(--bg); align-items: center;
+    justify-content: center; text-align: center; padding: 24px; font-size: 18px; }
+  @media (orientation: portrait) and (pointer: coarse) { #rotate { display: flex; } }
+  #invite { display: none; font-size: clamp(17px, 3.2vw, 24px); font-weight: 700; color: var(--gold); }
+  #invite bdi { direction: ltr; unicode-bidi: isolate; letter-spacing: .08em; }
+  /* phones: the app is better; a small dismissible bar at the top, over the loading cover and the game */
+  #app { display: none; position: fixed; top: calc(8px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
+    z-index: 5; align-items: center; gap: 10px; max-width: calc(100vw - 32px); box-sizing: border-box;
+    padding: 6px 8px 6px 14px; border-radius: 999px; background: rgba(5,7,15,.82); border: 1px solid rgba(255,255,255,.2);
+    font-size: 13px; color: var(--ink); white-space: nowrap; }
+  #app.on { display: flex; }
+  #app .store { padding: 3px 10px; border-radius: 999px; background: #1b2236; color: var(--dim); text-decoration: none; }
+  #app a.store { background: var(--gold); color: #05070f; font-weight: 700; }
+  #app button { border: 0; background: transparent; color: var(--dim); font-size: 18px; line-height: 1; padding: 2px 6px; cursor: pointer; }
+  /* phones' browsers: the app instead (the whole game is more memory than a phone's browser gives one page) */
+  #phone { display: none; position: fixed; inset: 0; z-index: 6; flex-direction: column; align-items: center;
+    justify-content: center; gap: 14px; padding: 24px; box-sizing: border-box; text-align: center;
+    background: radial-gradient(ellipse 60% 55% at 50% 40%, rgba(41,224,255,.22) 0%, rgba(41,224,255,0) 70%), var(--bg); }
+  #phone.on { display: flex; }
+  #phone h1 { margin: 6px 0 0; font-size: clamp(22px, 6vw, 30px); }
+  #phone p { margin: 0; max-width: 34em; color: var(--dim); font-size: 15px; line-height: 1.7; }
+  #phone .code { color: var(--gold); font-weight: 700; font-size: 18px; }
+  #phone .code bdi { direction: ltr; unicode-bidi: isolate; letter-spacing: .08em; }
+  #phone .logo { width: min(420px, 70vw); filter: none; }
+  #phone .stores { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
+  #phone .store { padding: 10px 18px; border-radius: 12px; background: #1b2236; color: var(--dim); text-decoration: none; font-weight: 700; }
+  #phone a.store { background: var(--gold); color: #05070f; }
+  #phone button { margin-top: 10px; border: 1px solid rgba(255,255,255,.25); background: transparent; color: var(--dim);
+    border-radius: 10px; padding: 8px 14px; font: 13px "Segoe UI", Tahoma, sans-serif; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="unity-canvas" tabindex="-1"></canvas>
+<div id="cover">
+  <div id="still"></div>
+  <div id="shade"></div>
+  <div id="grain"></div>
+  <div id="top">
+    <img class="logo" src="logo.png" width="1600" height="640" alt="STREETAK ستريتك">
+    <div class="ar" id="tagline">كورة الشارع… من فوق السطوح لحد الحواري</div>
+  </div>
+  <div id="mid">
+    <div id="invite"></div>
+    <div id="ftitle"></div>
+    <div id="err"></div>
+    <button id="retry" type="button">حاول تاني</button>
+  </div>
+  <div id="bottom">
+  <div id="keys">
+    <span dir="ltr"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span> أو الأسهم: الجري ·
+    <kbd>J</kbd> باص · <kbd>K</kbd> شوت (طويلة: أقوى؛ من غير كورة استخلاص) ·
+    <kbd>I</kbd> رفع (من غير كورة: زحلقة) · <kbd>L</kbd> مهارة · <kbd>Shift</kbd> سرعة · <kbd>C</kbd> الكاميرا · <kbd>Esc</kbd> إيقاف ·
+    <kbd>Tab</kbd> (دوسة طويلة) الإحصائيات
+    <br>في الجول (خماسي): <kbd>I</kbd> ارتمي (<kbd>O</kbd> واطية · <kbd>P</kbd> عالية) · <kbd>K</kbd> اطلع · والكورة في إيدك: <kbd>J</kbd> ارمي · <kbd>K</kbd> اشوط · <kbd>L</kbd> نزّلها
+    <br>تحكم برو: الماوس بيصوّب، والزرار الشمال شوت واليمين باص.
+    <br>ودراع البلايستيشن أو الإكس بوكس شغّال كمان.
+  </div>
+  <div id="tip"></div>
+  <div id="slow"></div>
+  <div id="row"><div id="msg">بنحمّل الماتش…</div></div>
+  <div id="bar"><div id="fill"></div></div>
+  </div>
+</div>
+<div id="rotate">لف الموبايل بالعرض عشان تلعب</div>
+<div id="app" role="note"><span id="app-text">نزّل التطبيق، أحسن على الموبايل</span><span id="app-store" class="store"></span>
+  <button id="app-x" type="button" aria-label="اقفل">×</button></div>
+<button id="fs" type="button">ملء الشاشة</button>
+<div id="phone" role="dialog" aria-live="polite">
+  <img class="logo" src="logo.png" width="1600" height="640" alt="STREETAK ستريتك">
+  <h1 id="phone-title"></h1>
+  <p id="phone-body"></p>
+  <div class="code" id="phone-code"></div>
+  <div class="stores" id="phone-stores"></div>
+  <button id="phone-try" type="button"></button>
+</div>
+<script>
+(function () {
+  // ---- the page's language: the player's choice in the game (Runtime/WebLang.cs keeps it here, "ar" / "en"), else
+  // the browser's (Arabic for an Arabic browser, English for any other); the game re-labels the page when he changes it
+  var LANG = (function () {
+    try { var saved = localStorage.getItem("streetak.lang"); if (saved === "ar" || saved === "en") return saved; } catch (e) {}
+    var n = (navigator.languages && navigator.languages[0]) || navigator.language || "";
+    return /^ar\b/i.test(n) ? "ar" : "en";
+  })();
+  var TEXT = {
+    ar: {
+      tagline: "كورة الشارع… من فوق السطوح لحد الحواري", loading: "بنحمّل الماتش…", court: "بنجهّز الملعب…",
+      keys: '<span dir="ltr"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span> أو الأسهم: الجري · ' +
+        '<kbd>J</kbd> باص · <kbd>K</kbd> شوت (طويلة: أقوى؛ من غير كورة استخلاص) · ' +
+        '<kbd>I</kbd> رفع (من غير كورة: زحلقة) · ' +
+        '<kbd>L</kbd> مهارة · <kbd>Shift</kbd> سرعة · <kbd>C</kbd> الكاميرا · <kbd>Esc</kbd> إيقاف · ' +
+        '<kbd>Tab</kbd> (دوسة طويلة) الإحصائيات' +
+        '<br>في الجول (خماسي): <kbd>I</kbd> ارتمي (<kbd>O</kbd> واطية · <kbd>P</kbd> عالية) · <kbd>K</kbd> اطلع · والكورة في إيدك: <kbd>J</kbd> ارمي · <kbd>K</kbd> اشوط · <kbd>L</kbd> نزّلها' +
+        '<br>تحكم برو: الماوس بيصوّب، والزرار الشمال شوت واليمين باص.<br>ودراع البلايستيشن أو الإكس بوكس شغّال كمان.',
+      mobileKeys: "النسخة دي معمولة للكمبيوتر (Chrome أو Edge). على الموبايل التطبيق أحسن بكتير.",
+      invite: "صاحبك مستنيك في الأوضة ", rotate: "لف الموبايل بالعرض عشان تلعب",
+      app: "نزّل التطبيق، أحسن على الموبايل", soon: " · قريبًا", close: "اقفل", fs: "ملء الشاشة",
+      failed: "حصلت مشكلة.", noLoader: "مقدرناش نحمّل اللعبة. جرّب تاني.",
+      noStart: "حصلت مشكلة وهي بتفتح. جرّب Chrome أو Edge على الكمبيوتر.", noFiles: "حصلت مشكلة في التحميل. اتأكد من النت وجرّب تاني.",
+      phoneTitle: "ستريتك على الموبايل من التطبيق",
+      phoneBody: "اللعبة كبيرة على متصفح الموبايل. نزّل التطبيق والعب بيه، أو افتح play.streetak.com على الكمبيوتر (Chrome أو Edge).",
+      phoneCode: "كود الأوضة: ", phoneCodeHow: " · افتح التطبيق واكتبه في «ادخل بكود صاحبك»",
+      phoneTry: "جرّب في المتصفح برضه",
+      slow: "النت بطيء… لسه بنحمّل، استنى شوية", offline: "مفيش نت. اتأكد من الواي فاي أو الداتا وجرّب تاني",
+      retry: "حاول تاني", tip: "نصيحة: ",
+      tips: ["دوسة طويلة على الشوت = شوطة أقوى", "من غير كورة: الشوت بيعمل استخلاص، والرفع بيعمل زحلقة",
+        "الزحلقة من ورا فاول… وممكن تاخد عليها كارت", "الرملة بتموّت الكورة، والأسفلت بيخليها تنط عالي: العب على أرضك",
+        "اعمل أوضة وابعت اللينك لصاحبك: يدخل معاك حتى من الموبايل", "مستعجل؟ «ابدأ مع البوتات» وصحابك يدخلوا والماتش شغال",
+        "في الخماسي تقدر تقف في الجول: اختار مركزك من اللوكر", "في الرانكد كل المهارات مفتوحة للكل: المهارة بإيدك مش بفلوسك",
+        "الماتش 4 دقايق، ولو خلص تعادل فيه دقيقة جول ذهبي", "تحكم برو: الماوس بيصوّب، والزرار الشمال شوت",
+        "دراع البلايستيشن أو الإكس بوكس شغّال على طول"]
+    },
+    en: {
+      tagline: "Street football, from the rooftops to the alleys", loading: "Loading the match…", court: "Setting up the court…",
+      keys: '<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or the arrows: run · ' +
+        '<kbd>J</kbd> pass · <kbd>K</kbd> shoot (hold: harder; no ball: tackle) · ' +
+        '<kbd>I</kbd> long ball (no ball: slide) · ' +
+        '<kbd>L</kbd> skill · <kbd>Shift</kbd> sprint · <kbd>C</kbd> camera · <kbd>Esc</kbd> pause · ' +
+        '<kbd>Tab</kbd> (hold) scoreboard' +
+        '<br>In goal (five-a-side): <kbd>I</kbd> dive (<kbd>O</kbd> low · <kbd>P</kbd> high) · <kbd>K</kbd> come out · ball in hand: <kbd>J</kbd> throw · <kbd>K</kbd> kick · <kbd>L</kbd> roll it out' +
+        '<br>Pro controls: the mouse aims, the left button shoots and the right one passes.<br>PlayStation and Xbox controllers work too.',
+      mobileKeys: "This version is made for computers (Chrome or Edge). On a phone the app is much better.",
+      invite: "Your friend is waiting in room ", rotate: "Turn your phone sideways to play",
+      app: "Get the app, it's better on a phone", soon: " · soon", close: "Close", fs: "Full screen",
+      failed: "Something went wrong.", noLoader: "We couldn't load the game. Try again.",
+      noStart: "Something went wrong while it was starting. Try Chrome or Edge on a computer.", noFiles: "Loading failed. Check your internet and try again.",
+      phoneTitle: "On a phone, Streetak is an app",
+      phoneBody: "The game is too big for a phone's browser. Get the app and play there, or open play.streetak.com on a computer (Chrome or Edge).",
+      phoneCode: "Room code: ", phoneCodeHow: " · open the app and type it in “Join with a friend's code”",
+      phoneTry: "Try in the browser anyway",
+      slow: "Slow connection… still loading, hang on", offline: "No internet. Check your Wi-Fi or mobile data and try again",
+      retry: "Try again", tip: "Tip: ",
+      tips: ["Hold shoot for a harder shot", "Without the ball: shoot tackles, long ball slides",
+        "A slide from behind is a foul, and maybe a card", "Sand kills the ball, asphalt makes it bounce high: play the ground",
+        "Make a room and send the link: your friend can join even from a phone", "In a hurry? “Start with bots”: friends can join mid-match",
+        "In five-a-side you can keep goal: pick your position in the locker", "In ranked every move is open to everyone: skill, not spending",
+        "Matches last 4 minutes; a draw gets a golden-goal minute", "Pro controls: the mouse aims, the left button shoots",
+        "PlayStation and Xbox controllers just work"]
+    }
+  };
+  function t(k) { return TEXT[LANG][k]; }
+  function byId(id) { return document.getElementById(id); }
+  var mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+  var loadingKey = "loading", storeName = "", storeSoon = false, inviteCode = null;
+  function applyLang() {
+    var root = document.documentElement;
+    root.lang = LANG; root.dir = LANG === "ar" ? "rtl" : "ltr";
+    byId("tagline").textContent = t("tagline");
+    byId("msg").textContent = t(loadingKey);
+    if (mobile) byId("keys").textContent = t("mobileKeys"); else byId("keys").innerHTML = t("keys");
+    byId("rotate").textContent = t("rotate");
+    byId("app-text").textContent = t("app");
+    byId("app-x").setAttribute("aria-label", t("close"));
+    byId("fs").textContent = t("fs");
+    byId("retry").textContent = t("retry");
+    if (cover && cover.classList.contains("failed")) byId("ftitle").textContent = t(loadingKey);
+    showTip();
+    if (slowOn) byId("slow").textContent = t("slow");
+    var slot = byId("app-store");
+    if (slot && storeSoon) slot.textContent = storeName + t("soon");
+    if (inviteCode) {
+      var inv = byId("invite"), num = document.createElement("bdi");
+      num.textContent = inviteCode;
+      inv.textContent = "";
+      inv.appendChild(document.createTextNode(t("invite")));
+      inv.appendChild(num);
+    }
+  }
+  window.streetakSetLang = function (code) { LANG = code === "ar" ? "ar" : "en"; applyLang(); };
+
+  // ---- the cover's picture (one of our courts, at random) and its tips, one every few seconds
+  var tipI = Math.floor(Math.random() * 100), slowOn = false;
+  function showTip() { var l = TEXT[LANG].tips; byId("tip").textContent = t("tip") + l[tipI % l.length]; }
+  (function () {
+    var pics = ["loading/turf.jpg", "loading/space.jpg"], img = new Image(), pic = pics[Math.floor(Math.random() * pics.length)];
+    img.onload = function () { var el = byId("still"); el.style.backgroundImage = "url(" + pic + ")"; el.classList.add("on"); };
+    img.src = pic;   // (missing: the night blue and the glow stay)
+    setInterval(function () {
+      var el = byId("tip");
+      if (!el || byId("cover").classList.contains("gone")) return;
+      el.classList.add("out");
+      setTimeout(function () { tipI++; showTip(); el.classList.remove("out"); }, 400);
+    }, 5500);
+  })();
+
+  var canvas = document.getElementById("unity-canvas");
+  var cover = document.getElementById("cover"), fill = document.getElementById("fill");
+  var msg = document.getElementById("msg"), err = document.getElementById("err"), fs = document.getElementById("fs");
+  function bar(f) { fill.style.width = Math.round(Math.max(0, Math.min(1, f)) * 100) + "%"; }
+  // a slow line: said calmly while the files still come («النت بطيء… لسه بنحمّل»); a failure: what happened (no
+  // internet only when the browser says so) and «حاول تاني», never a bar that just stops
+  function slow(on) { slowOn = on; byId("slow").textContent = on ? t("slow") : ""; }
+  function fail(key, detail) {
+    if (key === "noFiles" && navigator.onLine === false) key = "offline";
+    loadingKey = key; msg.textContent = t(key);
+    slow(false);
+    cover.classList.add("failed");
+    byId("ftitle").textContent = t(key);
+    var again = byId("retry");
+    again.style.display = "inline-block";
+    again.onclick = function () { location.reload(); };
+    if (detail) { err.style.display = "block"; err.textContent = String(detail && detail.message || detail); }
+  }
+  var lastBytes = performance.now(), downloading = true;
+  setInterval(function () {
+    if (!downloading || cover.classList.contains("failed")) return;
+    var quiet = performance.now() - lastBytes;
+    if (navigator.onLine === false) { slowOn = true; byId("slow").textContent = t("offline"); }
+    else if (quiet > 8000 && !slowOn) slow(true);
+    else if (quiet < 2000 && slowOn) slow(false);
+  }, 1000);
+  // an invite link (/j/<code>, or ?j=<code>): the game reads the code from the address itself (Runtime/Invite.cs:
+  // Application.absoluteURL) and goes straight into that room; here the cover just says so
+  var invite = (location.pathname.match(/\/j\/(\d{4,8})\/?$/) || location.search.match(/[?&]j=(\d{4,8})(?:&|$)/) || [])[1];
+  if (invite) {
+    inviteCode = invite;
+    document.getElementById("invite").style.display = "block";
+  }
+
+  // phones: «نزّل التطبيق», the store of this phone (marked «قريبًا» until its address is set here)
+  var STORES = { android: "", ios: "" };   // e.g. https://play.google.com/store/apps/details?id=com.streetak.football
+  var dismissed = false;
+  try { dismissed = localStorage.getItem("streetak.appbar") === "x"; } catch (e) {}
+  if (mobile && !dismissed) {
+    var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+    var storeUrl = ios ? STORES.ios : STORES.android;
+    storeName = ios ? "App Store" : "Google Play";
+    var slot = document.getElementById("app-store"), app = document.getElementById("app");
+    if (storeUrl) {
+      var a = document.createElement("a");
+      a.className = "store"; a.href = storeUrl; a.rel = "noopener"; a.textContent = storeName;
+      slot.replaceWith(a);
+    } else storeSoon = true;
+    app.classList.add("on");
+    document.getElementById("app-x").onclick = function () {
+      app.classList.remove("on");
+      try { localStorage.setItem("streetak.appbar", "x"); } catch (e) {}
+    };
+  }
+  applyLang();
+
+  // ---- phones' browsers (28 Oct: Safari on the founder's iPhone crashed loading the game, "A problem repeatedly
+  // occurred"): the whole game is ~260 MB of art and players and needs more memory than a phone's browser gives one
+  // page, so a phone gets the app instead (an invite's room code shown, to type in the app), with «جرّب في المتصفح
+  // برضه» for a phone that might cope (remembered; ?try=1 too). Computers and tablets with a keyboard load as before.
+  var tryAnyway = false;
+  try { tryAnyway = localStorage.getItem("streetak.phonetry") === "1"; } catch (e) {}
+  if (/[?&]try=1(?:&|$)/.test(location.search)) tryAnyway = true;
+  if (mobile && !tryAnyway) {
+    var gate = byId("phone");
+    byId("phone-title").textContent = t("phoneTitle");
+    byId("phone-body").textContent = t("phoneBody");
+    if (inviteCode) {
+      var pc = byId("phone-code"), b2 = document.createElement("bdi");
+      b2.textContent = inviteCode;
+      pc.appendChild(document.createTextNode(t("phoneCode"))); pc.appendChild(b2); pc.appendChild(document.createTextNode(t("phoneCodeHow")));
+    }
+    var isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+    var stores = byId("phone-stores");
+    [["Google Play", STORES.android, !isIos], ["App Store", STORES.ios, isIos]].forEach(function (s) {
+      var el;
+      if (s[1]) { el = document.createElement("a"); el.href = s[1]; el.rel = "noopener"; el.textContent = s[0]; }
+      else { el = document.createElement("span"); el.textContent = s[0] + t("soon"); }
+      el.className = "store";
+      if (s[2]) stores.insertBefore(el, stores.firstChild); else stores.appendChild(el);
+    });
+    var tryBtn = byId("phone-try");
+    tryBtn.textContent = t("phoneTry");
+    tryBtn.onclick = function () {
+      try { localStorage.setItem("streetak.phonetry", "1"); } catch (e) {}
+      location.reload();
+    };
+    gate.classList.add("on");
+    document.getElementById("app").classList.remove("on");
+    document.getElementById("cover").style.display = "none";
+    return;
+  }
+
+  // ---- the game's files (docs/dev/web.md "First load")
+  // build.json (never cached: _headers) names them, each in parts of at most 24 MiB (Cloudflare Pages caps a file at
+  // 25 MiB) that push_pages.sh names with the file's own hash ("immutable": true), so one name is always the same bytes
+  // and a new build can never be served an old part, from any cache (the browser's, GitHub's CDN, ours). The parts
+  // come from "partsBase" (GitHub's CDN: ~5 MB/s from Egypt against ~100 KB/s from Cloudflare Pages for big files),
+  // four at a time (one connection never fills a line from Egypt), and are kept in the browser's Cache Storage (a
+  // second visit downloads nothing; parts no build.json names any more are dropped once the game runs). A build.json
+  // without hashed names (an older push, a local test) keys everything by its build id instead.
+  var CACHE = "streetak-files-v2";
+  var partsBase = "Build/", buildId = "", immutable = false;
+  var t0 = performance.now(), timing = window.streetakTiming = { downloaded: 0, fromCache: 0 };
+  function partUrl(name) { return partsBase + name + (immutable ? "" : "?b=" + encodeURIComponent(buildId)); }
+  function openCache() {
+    try { return window.caches ? caches.open(CACHE).catch(function () { return null; }) : Promise.resolve(null); }
+    catch (e) { return Promise.resolve(null); }
+  }
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  // one part: from the cache, else the network (streamed, counting bytes; tried again after 2, 5 and 10 s: the parts'
+  // host can be a minute behind the page's right after a deploy), then into the cache
+  function getOne(cache, name, onBytes) {
+    var url = partUrl(name);
+    var hit = cache ? cache.match(url).catch(function () { return null; }) : Promise.resolve(null);
+    return hit.then(function (r) {
+      if (r) return r.blob().then(function (b) { onBytes(b.size); timing.fromCache += b.size; return b; });
+      var tries = 0;
+      function attempt() {
+        var got = 0;
+        return fetch(url, { cache: immutable ? "default" : "no-cache" }).then(function (r) {
+          if (!r.ok) throw new Error(name + ": HTTP " + r.status);
+          if (/text\/html/.test(r.headers.get("content-type") || "")) throw new Error(name + ": not found (the host answered with a page)");
+          if (!r.body || !r.body.getReader) return r.blob().then(function (b) { got = b.size; onBytes(b.size); return b; });
+          var reader = r.body.getReader(), chunks = [];
+          function pump() {
+            return reader.read().then(function (st) {
+              if (st.done) return new Blob(chunks);
+              chunks.push(st.value); got += st.value.length; onBytes(st.value.length); return pump();
+            });
+          }
+          return pump();
+        }).catch(function (e) {
+          onBytes(-got);   // (the bar takes back what this try counted)
+          if (++tries > 3) throw e;
+          slow(true);   // (trying again: «النت بطيء… لسه بنحمّل»)
+          return wait([2000, 5000, 10000][tries - 1]).then(attempt);
+        });
+      }
+      return attempt().then(function (b) {
+        timing.downloaded += b.size;
+        if (cache) cache.put(url, new Response(b)).catch(function () {});
+        return b;
+      });
+    });
+  }
+  var free4 = 4, queue = [];
+  function inSlot(job) {
+    return new Promise(function (resolve, reject) {
+      function free() { free4++; if (queue.length) queue.shift()(); }
+      function run() { free4--; job().then(function (v) { free(); resolve(v); }, function (e) { free(); reject(e); }); }
+      if (free4 > 0) run(); else queue.push(run);
+    });
+  }
+  // a file from its parts, joined in order and checked against build.json's size (a part that came wrong is
+  // dropped from the cache, so the next visit fetches it again)
+  function getFile(cache, name, p, onBytes) {
+    return Promise.all(p.files.map(function (f) { return inSlot(function () { return getOne(cache, f, onBytes); }); }))
+      .then(function (blobs) {
+        var blob = new Blob(blobs);
+        if (p.size && blob.size !== p.size) {
+          if (cache) p.files.forEach(function (f) { cache.delete(partUrl(f)).catch(function () {}); });
+          throw new Error(name + ": " + blob.size + " bytes, build.json says " + p.size);
+        }
+        return blob;
+      });
+  }
+  // The build is gzip (StreetakCommands BuildWebGL): decoded here by the browser itself (DecompressionStream, native:
+  // a second or two for the whole game, where Unity's own JS decoder took ~35 s for Brotli), and handed to Unity
+  // decoded. Brotli the same where the browser has it; on any failure, or with neither, the bytes as they came, which
+  // Unity's loader decodes itself ("decompression fallback"). Bytes a host already decoded pass through as they are.
+  var nativeBrotli = (function () { try { new DecompressionStream("brotli"); return true; } catch (e) { return false; } })();
+  function unpack(blob) {
+    if (!blob.stream || !window.DecompressionStream) return Promise.resolve(blob);
+    return blob.slice(0, 2).arrayBuffer().then(function (h) {
+      var b = new Uint8Array(h), gzip = b[0] === 0x1f && b[1] === 0x8b;
+      if (!gzip && !nativeBrotli) return blob;
+      return new Response(blob.stream().pipeThrough(new DecompressionStream(gzip ? "gzip" : "brotli"))).blob();
+    }).catch(function () { return blob; });
+  }
+  function dropOld(cache, keep) {
+    try {
+      caches.keys().then(function (keys) {
+        // (the caches of the pages before this one: "streetak-parts-<stamp>", "streetak-build-<id>")
+        keys.forEach(function (k) { if (k !== CACHE && /^streetak-(parts|build)-/.test(k)) caches.delete(k); });
+      }).catch(function () {});
+      if (cache) cache.keys().then(function (reqs) {
+        reqs.forEach(function (q) { if (!keep[q.url]) cache.delete(q).catch(function () {}); });
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  fetch("build.json", { cache: "no-cache" }).then(function (r) {
+    if (!r.ok) throw new Error("build.json: HTTP " + r.status);
+    return r.json();
+  }).then(function (b) {
+    if (b.partsBase) partsBase = b.partsBase;
+    immutable = !!b.immutable;
+    buildId = b.build || (b.stamp + "-" + ((b.parts && b.parts[b.data] && b.parts[b.data].size) || ""));
+    return openCache().then(function (cache) {
+      var parts = b.parts || {}, total = 0, done = 0, urls = {}, keep = {};
+      [b.data, b.framework, b.code].forEach(function (n) {
+        if (!parts[n]) parts[n] = { size: (b.sizes && b.sizes[n]) || 0, files: [n] };   // (a file the build didn't cut)
+        total += parts[n].size;
+        parts[n].files.forEach(function (f) { keep[new URL(partUrl(f), location.href).href] = 1; });
+      });
+      var share = 0.8;   // the bar: the files first, then Unity's own start-up
+      function counted(n) { done += n; if (n > 0) lastBytes = performance.now(); if (total > 0) bar(share * Math.min(1, done / total)); }
+      return Promise.all([b.data, b.framework, b.code].map(function (n) {
+        return getFile(cache, n, parts[n], counted).then(function (blob) {
+          loadingKey = "court"; msg.textContent = t("court");
+          return unpack(blob);
+        }).then(function (blob) { urls[n] = URL.createObjectURL(blob); });
+      })).then(function () {
+        timing.files = Math.round(performance.now() - t0);
+        downloading = false; slow(false);
+        console.log("[Streetak] files ready in " + timing.files + " ms: " + Math.round(timing.downloaded / 1048576) +
+          " MB downloaded, " + Math.round(timing.fromCache / 1048576) + " MB from the cache (native brotli: " + nativeBrotli + ")");
+        return { b: b, urls: urls, share: share, cache: cache, keep: keep };
+      });
+    });
+  }).then(function (s) {
+    var b = s.b;
+    var config = {
+      dataUrl: s.urls[b.data], frameworkUrl: s.urls[b.framework], codeUrl: s.urls[b.code],
+      // the content packs (Runtime/Content.cs: Application.streamingAssetsPath + "/Content/<name>-<hash>.bundle")
+      // from the parts' host too (build.json "streamingBase"; GitHub's CDN), else next to the page
+      streamingAssetsUrl: b.streamingBase || "StreamingAssets",
+      companyName: "Streetak", productName: "Streetak", productVersion: b.version || "",
+      // the screen's own pixels (up to 3x): capped at 1.5 the canvas was drawn small and stretched by the browser, so
+      // every button and letter came out soft on a phone or a hi-dpi laptop (founder, 28 Oct). The game keeps the 3D
+      // to its old pixel budget itself (CameraRig: the render scale), the UI is drawn at full resolution.
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, 3),
+      // our blobs never into Unity's cache (this page keeps the files); the content packs are named with their hash,
+      // so Unity's cache (IndexedDB) keeps them for good; the rest revalidated
+      cacheControl: function (url) {
+        if (/^blob:/.test(url)) return "no-store";
+        if (/\/StreamingAssets\/Content\/[^/?]+\.bundle(\?|$)/.test(url)) return "immutable";
+        return "must-revalidate";
+      },
+      showBanner: function (text, type) { if (type === "error") fail("failed", text); else console.warn(text); },
+    };
+    if (b.symbols) config.symbolsUrl = partsBase + b.symbols;
+    var script = document.createElement("script");
+    script.src = "Build/" + b.loader + "?b=" + encodeURIComponent(buildId);
+    script.onerror = function () { fail("noLoader", b.loader); };
+    script.onload = function () {
+      createUnityInstance(canvas, config, function (p) { bar(s.share + (1 - s.share) * p); })
+        .then(function (unity) {
+          timing.unity = Math.round(performance.now() - t0);
+          console.log("[Streetak] Unity running " + timing.unity + " ms after the page");
+          cover.classList.add("gone");
+          fs.style.display = "block";
+          fs.onclick = function () { unity.SetFullscreen(1); canvas.focus(); };
+          canvas.focus();
+          window.streetak = unity;
+          dropOld(s.cache, s.keep);
+        })
+        .catch(function (e) { fail("noStart", e); });
+    };
+    document.body.appendChild(script);
+  }).catch(function (e) { fail("noFiles", e); });
+
+  // the page itself offline once played (sw.js: the page and the loader network first, the last copy offline)
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+  }
+  canvas.addEventListener("pointerdown", function () { canvas.focus(); });
+  // Tab held is the match's scoreboard (Runtime/Scoreboard.cs): once the game runs, Tab never moves the browser's
+  // focus off it, wherever the focus was (the canvas, the full-screen button, the page); the game still reads it
+  window.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab" || !window.streetak) return;
+    e.preventDefault();
+    if (document.activeElement !== canvas) canvas.focus();
+  }, true);
+})();
+</script>
+</body>
+</html>

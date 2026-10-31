@@ -1,0 +1,5 @@
+# play.streetak.com (the web game). Invite links /j/<code> and friend links /f/<code> are the same page (canonical: /)
+User-agent: *
+Allow: /
+Disallow: /j/
+Disallow: /f/

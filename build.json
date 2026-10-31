@@ -1,0 +1,43 @@
+{
+  "version": "0.3.0",
+  "stamp": "51aade76",
+  "build": "20261031091925-51aade76",
+  "sizes": {
+    "WebGL.data.unityweb": 146483487,
+    "WebGL.framework.js.unityweb": 187372,
+    "WebGL.wasm.unityweb": 20103983
+  },
+  "loader": "WebGL.loader.js",
+  "data": "WebGL.data.unityweb",
+  "framework": "WebGL.framework.js.unityweb",
+  "code": "WebGL.wasm.unityweb",
+  "parts": {
+    "WebGL.data.unityweb": {
+      "size": 146483487,
+      "sha256": "7c6e0297e252f5b600a4531e37459ad928011f45a6531254669ffe91cfece581",
+      "files": [
+        "WebGL.data.unityweb.7c6e0297e252.p00",
+        "WebGL.data.unityweb.7c6e0297e252.p01",
+        "WebGL.data.unityweb.7c6e0297e252.p02",
+        "WebGL.data.unityweb.7c6e0297e252.p03",
+        "WebGL.data.unityweb.7c6e0297e252.p04",
+        "WebGL.data.unityweb.7c6e0297e252.p05"
+      ]
+    },
+    "WebGL.framework.js.unityweb": {
+      "size": 187372,
+      "sha256": "8ccff4ce82ea04a091178faa8fec705267b642cf4b3b8115ee35ccabd7bae4cd",
+      "files": [
+        "WebGL.framework.js.unityweb.8ccff4ce82ea.p00"
+      ]
+    },
+    "WebGL.wasm.unityweb": {
+      "size": 20103983,
+      "sha256": "23a848449169ecbcba32c865fa50167316c9bc48aec7127488cfca4cd3d22056",
+      "files": [
+        "WebGL.wasm.unityweb.23a848449169.p00"
+      ]
+    }
+  },
+  "immutable": true
+}
