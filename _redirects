@@ -1,0 +1,9 @@
+# Cloudflare Pages rules (ignored elsewhere). Invite links https://play.streetak.com/j/<code> (Runtime/Invite.cs):
+# the game's page at that address (a rewrite, the address stays), which reads the room code from it. The apps take
+# these links first when installed (App Links / Universal Links, .well-known/).
+# The target is "/", never "/index.html": Pages answers /index.html with a 308 to "/" (its pretty URLs), and a rewrite
+# onto that redirect is a 404 (28 Oct: every invite link on play.streetak.com was the 404 page; checked with
+# `wrangler pages dev`: "/index.html 200" 404, "/ 200" the game). 404.html also sends /j/<code> on to /?j=<code>.
+/j/*  /  200
+# Friend links https://play.streetak.com/f/<player code> (Runtime/Friends): the same page, «ضيف صاحب» with that code.
+/f/*  /  200
