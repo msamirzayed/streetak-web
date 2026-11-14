@@ -1,0 +1,16 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "4UT342B7R5.com.streetak.football",
+        "appIDs": ["4UT342B7R5.com.streetak.football"],
+        "paths": ["/j/*", "/f/*"],
+        "components": [
+          { "/": "/j/*", "comment": "invite links to a friend's room (Runtime/Invite.cs)" },
+          { "/": "/f/*", "comment": "friend links with a player code (Runtime/Friends)" }
+        ]
+      }
+    ]
+  }
+}

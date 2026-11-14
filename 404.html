@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<!-- A real 404 (Cloudflare Pages answers every missing path with the root page, status 200, unless there is a
+     404.html: a missing game file or content pack then fails as missing instead of "loading" a web page). -->
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Streetak · ستريتك</title>
+<script>
+// an invite link that reached this page (the host's /j/* rewrite missing, or another host): on to the game with the
+// room's code in the query, which the page and the game read too (Runtime/Invite.cs)
+(function () { var m = location.pathname.match(/^(.*\/)j\/(\d{4,8})\/?$/); if (m) location.replace(m[1] + "?j=" + m[2]); })();
+// a friend link /f/<code> the same way (?f=<code>, Runtime/Friends/FriendRules.CodeFromLink)
+(function () { var m = location.pathname.match(/^(.*\/)f\/([A-Za-z0-9-]{8,9})\/?$/); if (m) location.replace(m[1] + "?f=" + m[2]); })();
+</script>
+<style>html,body{margin:0;height:100%;background:#05070f;color:#f4f1ea;font-family:"Segoe UI",Tahoma,system-ui,sans-serif}
+main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;text-align:center}
+a{color:#f2b632}</style></head>
+<body><main><div style="font-size:40px;font-weight:800;letter-spacing:.12em;direction:ltr">STREET<b style="color:#f2b632">AK</b></div>
+<p>الصفحة دي مش موجودة. <a href="/">ارجع للعبة</a></p><p dir="ltr">Page not found. <a href="/">Back to the game</a></p></main></body>
+</html>

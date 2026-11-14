@@ -1,0 +1,45 @@
+{
+  "version": "1.0.3",
+  "stamp": "6bd59644",
+  "build": "20261114165931-6bd59644",
+  "sizes": {
+    "WebGL.data.unityweb": 146277394,
+    "WebGL.framework.js.unityweb": 187554,
+    "WebGL.wasm.unityweb": 20579775
+  },
+  "loader": "WebGL.loader.js",
+  "data": "WebGL.data.unityweb",
+  "framework": "WebGL.framework.js.unityweb",
+  "code": "WebGL.wasm.unityweb",
+  "parts": {
+    "WebGL.data.unityweb": {
+      "size": 146277394,
+      "sha256": "cd4b2028767d89891dfc0068a5aa2288962e07c9103544e30ab1db818f788a12",
+      "files": [
+        "WebGL.data.unityweb.cd4b2028767d.p00",
+        "WebGL.data.unityweb.cd4b2028767d.p01",
+        "WebGL.data.unityweb.cd4b2028767d.p02",
+        "WebGL.data.unityweb.cd4b2028767d.p03",
+        "WebGL.data.unityweb.cd4b2028767d.p04",
+        "WebGL.data.unityweb.cd4b2028767d.p05"
+      ]
+    },
+    "WebGL.framework.js.unityweb": {
+      "size": 187554,
+      "sha256": "c10c0feece7a62f5a5cd04a7510b3bb2a957bd1b4969a90102a2257238b295e1",
+      "files": [
+        "WebGL.framework.js.unityweb.c10c0feece7a.p00"
+      ]
+    },
+    "WebGL.wasm.unityweb": {
+      "size": 20579775,
+      "sha256": "a101ac6def86dcbaceb615d4c0c3dbcf21cad16cb288d09a15c40b19f56b656b",
+      "files": [
+        "WebGL.wasm.unityweb.a101ac6def86.p00"
+      ]
+    }
+  },
+  "immutable": true,
+  "partsBase": "https://msamirzayed.github.io/streetak-web/Build/",
+  "streamingBase": "https://msamirzayed.github.io/streetak-web/StreamingAssets"
+}
