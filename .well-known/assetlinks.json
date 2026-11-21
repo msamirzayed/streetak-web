@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.streetak.football",
+      "sha256_cert_fingerprints": [
+        "82:A1:3A:80:5F:8E:63:81:56:04:6A:53:8F:91:30:E0:E2:CF:EE:1C:11:0C:59:0C:EA:1E:5B:3B:0E:0A:DC:47"
+      ]
+    }
+  }
+]

@@ -1,0 +1,30 @@
+# Cloudflare Pages headers (ignored by GitHub Pages)
+/build.json
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/
+  Cache-Control: no-cache
+/Build/*
+  Cache-Control: public, max-age=3600, must-revalidate
+/sw.js
+  Cache-Control: no-cache
+# the content packs (Content.cs): the file name carries the content's hash, so a browser keeps one for good
+/StreamingAssets/Content/*
+  Cache-Control: public, max-age=31536000, immutable
+# invite links /j/<code>: the page itself (_redirects), never cached apart from it
+/j/*
+  Cache-Control: no-cache
+# the apps' link files (App Links, Universal Links): JSON, straight from here (no redirect), the AASA has no extension
+/.well-known/assetlinks.json
+  Content-Type: application/json
+  Cache-Control: public, max-age=3600
+/.well-known/apple-app-site-association
+  Content-Type: application/json
+  Cache-Control: public, max-age=3600
+# the link preview's picture (WhatsApp and the rest)
+/og.jpg
+  Cache-Control: public, max-age=86400
+# the loading cover's pictures (tools/art/make_loading_stills.py)
+/loading/*
+  Cache-Control: public, max-age=86400
